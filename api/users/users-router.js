@@ -40,13 +40,26 @@ router.put('/:id', validateUserId, validateUser, (req, res, next) => {
   // RETURN THE FRESHLY UPDATED USER OBJECT
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
-  console.log(req.user);
-  console.log(req.name);
+  User.update(req.params.id, { name: req.name }) 
+  .then(() => {
+  return User.getById(req.params.id)
+  })
+  .then(user => {
+    res.json(user)
+  })
+  .catch(next)
 });
 
-router.delete('/:id', validateUserId, (req, res, next) => {
+router.delete('/:id', validateUserId,  async (req, res, next) => {
+  try {
+    await User.remove(req.params.id)
+    res.json(req.user)
+  } catch (err) {
+    next(err)
+  }
   // RETURN THE FRESHLY DELETED USER OBJECT
   // this needs a middleware to verify user id
+
 });
 
 router.get('/:id/posts', validateUserId, (req, res, next) => {
